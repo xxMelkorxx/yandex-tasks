@@ -24,7 +24,7 @@ def calc(a):
     return count
 
 
-n, nums = int("6"), [int(i) for i in "1000000000 1000000000 1000000000 1000000000 1000000000 1".split()]
+n, nums = int(input()), [int(i) for i in input().split()]
 counter, curr_min = 0, min(nums)
 
 while True:
