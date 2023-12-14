@@ -49,25 +49,40 @@ def distance(p1: Points, p2: Points, plane: Plane) -> float:
 
 # Проверка, является ли последовательность точек на плоскости тривиальной.
 def is_trivial(points: list, plane: Plane) -> bool:
-    curr_d = 0
+    curr_d, istriv = 0, True
     for i in range(1, len(points)):
         d = distance(points[0], points[i], plane)
-        print(f"p0: {points[0]}, pi: {points[i]}, d = {d}, plane - {plane.value}")
+        # print(f"p0: {points[0]}, p{i}: {points[i]}, d = {d}, plane - {plane.value}")
         if d > curr_d:
             curr_d = d
         else:
-            return False
-    return True
+            istriv = False
+    return istriv
 
 # Проверка, является ли последовательность точек хорошей.
 def is_good(points: list) -> bool:
     is_triv_xy = is_trivial(points, Plane.Oxy)
-    print(f"Последовательность тривиальная? {is_triv_xy}")
+    # print(f"Последовательность тривиальная? - {is_triv_xy}")
     is_triv_yz = is_trivial(points, Plane.Oyz)
-    print(is_triv_yz)
+    # print(f"Последовательность тривиальная? - {is_triv_yz}")
     is_triv_xz = is_trivial(points, Plane.Oxz)
-    print(is_triv_xz)
+    # print(f"Последовательность тривиальная? - {is_triv_xz}")
     return not (is_triv_xy and is_triv_yz and is_triv_xz)
+
+def permute(nums):
+    result = []
+    generate_permutations(nums, 0, result)
+    return result
+
+def generate_permutations(nums, index, result):
+    if index == len(nums):
+        result += [nums[:]]
+        return
+
+    for i in range(index, len(nums)):
+        nums[index], nums[i] = nums[i], nums[index]
+        generate_permutations(nums, index + 1, result)
+        nums[index], nums[i] = nums[i], nums[index]
 
 if __name__ == '__main__':
     n, list_p = int(input()), []
@@ -75,4 +90,20 @@ if __name__ == '__main__':
     for _ in range(n):
         p = input().split()
         list_p += [Points(int(p[0]), int(p[1]), int(p[2]))]
-    print(f"Является ли последовательность хорошей? - {is_good(list_p)}")
+    # print(f"Является ли последовательность хорошей? - {is_good(list_p)}")
+
+    # Получение всех возможных перестановок индексов.
+    permutations = []
+    generate_permutations(list(range(n)), 0, permutations)
+    for p in permutations:
+        for j in p:
+            print(j, end=' ')
+        print(f"- {is_good([list_p[i - 1] for i in p])}")
+
+    print()
+    for i, perm in enumerate(permutations):
+        if i % 2 == 0 and is_good([list_p[i] for i in perm]):
+            for j in perm:
+                print(j + 1, end=' ')
+            print()
+            # break
